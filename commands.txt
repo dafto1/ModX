@@ -1,0 +1,15 @@
+!help
+!ban
+!kick
+!invite
+!meme 
+!memeIn - Indian Memes
+!delTxt
+!delVc
+!createText
+!createVoice
+!createCategory
+!whois
+!mute  
+!unmute 
+!ask - chat gpt 
