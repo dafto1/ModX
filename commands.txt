@@ -13,3 +13,4 @@
 !mute  
 !unmute 
 !ask - chat gpt 
+!checkSub

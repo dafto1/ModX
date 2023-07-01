@@ -15,20 +15,35 @@ ModX.remove_command('help')
 
 reddit = praw.Reddit(client_id="byIXmAW3kRROE8EoBWabFQ",client_secret= "BN1H61hNjCJ56ssmogFdBvsjOlCMyg", username= "MonkeMusk1234", password= "THEDARKKNIGHT@2020", user_agent = "pythonPraw"  )
 
+@ModX.event
+async def on_ready():
+  await  ModX.change_presence(status = discord.Status.dnd, activity = discord.Game("Moderating, Answering and Memeing!"))
+ 
 #help 
 @ModX.command()
 async def help(ctx, member:discord.Member = None):  
    bot_user = ModX.user
    avatar_url = bot_user.avatar
-   embed = discord.Embed(title = "ModX commands", description= "Useful bot commands", colour=discord.Colour.pink())
+   embed = discord.Embed(title = "__ModX commands__", description= "Useful bot commands", colour=discord.Colour.pink())
    
-   embed.add_field(name= "!help", value = "Gives list of commands")
+   embed.add_field(name= "`!help`", value = "Gives list of commands")
    embed.set_thumbnail(url =avatar_url )
-   embed.add_field(name= "!kick", value = 'Kicks the user from server')
-   embed.add_field(name= "!ban", value = 'Bans the user from server')
-   embed.add_field(name= "!whois", value = 'Gives information about a user') 
-
-   await ctx.send(embed = embed, content= None)
+   embed.add_field(name= "`!kick`", value = 'Kicks the user from server')
+   embed.add_field(name= "`!ban`", value = 'Bans the user from server')
+   embed.add_field(name= "`!mute`", value = 'Mutes the user in voice channel')
+   embed.add_field(name = "`!unmute`", value = "Unmutes the user in voice channel")
+   embed.add_field(name= "`!createText`", value = "!createText <channel> <category>")
+   embed.add_field(name = "`!createVoice`", value = "!createText <channel> <category>")
+   embed.add_field(name= "`!delTxt`", value = "Deletes the text channel")
+   embed.add_field(name= "`!delVc`", value = "Deletes the Voice Channel")
+   embed.add_field(name="`!invite`", value = "Creates an Instant Server Invite")
+   embed.add_field(name = "`!ask`", value = "Ask any question , ChatGPT shall answer")
+   embed.add_field(name= "`!meme`", value = "Trending memes from r/memes")
+   embed.add_field(name= "`!memeIn`", value = "Trending memes from r/SaimanSays")
+   embed.add_field(name= "`!checkSub`", value = "Check trending posts of your favourite subreddit : \n !checkSub <subreddit-name>")
+   embed.add_field(name= "`!whois`", value = 'Gives information about a user in an embed') 
+   
+   await ctx.send(embed = embed)
 
 
    
@@ -40,14 +55,16 @@ async def meme(ctx):
 
    for submission in subreddit.hot(limit = 50) :
       posts.append(submission)
+  
 
    random_post = random.choice(posts)
    name = random_post.title
    url = random_post.url 
+   
 
    redditEm = discord.Embed(title = name, color = discord.Color.random())
    redditEm.set_image(url = url)
-
+  
    await ctx.send(embed= redditEm)
 
 #memeIn
@@ -67,6 +84,23 @@ async def memeIn(ctx):
    redditEm.set_image(url = url)
 
    await ctx.send(embed= redditEm)
+
+@ModX.command()
+async def checkSub(ctx, subreddit_name):
+   subreddit = reddit.subreddit(subreddit_name)
+   posts = []
+
+   for submission in subreddit.hot(limit = 50):
+      posts.append(submission)
+   
+   random_post = random.choice(posts)
+   name = random_post.title
+   url = random_post.url 
+
+   redditEm = discord.Embed(title = name, color = discord.Color.random())
+   redditEm.set_image(url = url)
+
+   await ctx.message.reply(embed= redditEm)
 
 
 #ask 
@@ -95,7 +129,7 @@ async def kick(ctx, member: discord.Member,*, reason = None):
      if reason == None:
         reason = "no reason provided"
      await ctx.guild.kick(member)
-     await ctx.send(f'User {member.mention} has been kicked for {reason}')
+     await ctx.send(f'❌User {member.mention} has been kicked for {reason}')
     except:
        await ctx.send("User is at higher level ")
 
@@ -107,17 +141,20 @@ async def ban(ctx, member: discord.Member, *, reason = None):
    if reason == None:
       reason = "no reason provided"
    await ctx.guild.ban(member)
-   await ctx.reply(f'User {member.mention} banned  for {reason}')
+   await ctx.reply(f'❌User {member.mention} banned  for {reason}')
 
 #WHO IS 
 @ModX.command(aliases=['user', 'infor'])
-async def whois(ctx, member:discord.Member):
+async def whois(ctx, member:discord.Member = None):
    if member == None:
       member= ctx.author 
+   join = member.joined_at
+   joinSTR =   join.strftime('%D')
 
    embed= discord.Embed(title= member.name, description= member.mention, color = discord.Colour.blue())
    embed.add_field(name= "ID", value = member.id, inline= True)
    embed.set_thumbnail(url = member.avatar)
+   embed.add_field(name='Server Join Date', value=joinSTR, inline=False)
    await ctx.message.reply(embed= embed)
 
 
@@ -127,28 +164,51 @@ async def whois(ctx, member:discord.Member):
 async def createCategory(ctx, category_name):
    guild  = ctx.guild 
    category = await guild.create_category(category_name)
-   await ctx.message.reply(f'{ctx.author.mention} created {category.mention}')
+   await ctx.message.reply(f'👥{ctx.author.mention} created {category.mention}')
 
 
 #createText
 @ModX.command()
 @commands.has_permissions(manage_channels=True)
-async def createText(ctx, channel_name):
+async def createText(ctx, channel_name, *, category_name = None):
    guild=  ctx.guild 
-   mention = ctx.author.mention
-   channel = await guild.create_text_channel(channel_name)
-   await ctx.send(f'{mention} created the text channel  {channel.mention} !')
+   if category_name : 
+      category = discord.utils.get(guild.categories, name = category_name)
+      if category: 
+         channel = await category.create_text_channel(channel_name)
+         await ctx.message.reply(f'📜{ctx.author.mention} created {channel.mention}')
+      else : 
+         category = await guild.create_category(category_name)
+         channel = await category.create_text_channel(channel_name)
+         await ctx.message.reply(f'📜{ctx.author.mention} created {channel.mention} in {category_name}')
+
+   else : 
+      channel = await guild.create_text_channel(channel_name)
+      await ctx.message.reply(f'📜{ctx.author.mention} created {channel.mention}')
+
+      
+   # await ctx.send(f'{mention} created the text channel  {channel.mention} !')
 
 #createVoice
 @ModX.command()
 @commands.has_permissions(manage_channels=True)
-async def createVoice(ctx, vc_name =None):
-   if vc_name == None : 
-      await ctx.send(f'Must mention the voice channel name')
-   guild = ctx.guild
-   channel = await guild.create_voice_channel(vc_name)
-   await ctx.send(f'{ctx.author.mention} created the voice channel {channel.mention}')
-   
+async def createVoice(ctx, channel_name, *, category_name = None):
+   guild = ctx.guild 
+
+   if category_name :
+      category = discord.utils.get(guild.categories, name = category_name)
+      if category : 
+         channel = await category.create_voice_channel(channel_name)
+         await ctx.message.reply(f'🎤{ctx.author.mention} created {channel.mention}')
+      else : 
+         category = await guild.create_category(category_name)
+         channel = await category.create_voice_channel(channel_name)
+         await ctx.message.reply(f'🎤{ctx.author.mention} created {channel.mention} in {category_name}')
+
+   else : 
+      channel = await  guild.create_voice_channel(channel_name)
+      await ctx.message.reply(f'🎤{ctx.author.mention} created {channel.mention}')
+
 
 #delTxt
 @ModX.command()
