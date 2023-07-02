@@ -1,19 +1,33 @@
 import discord 
 import random
 import praw
-
 import openai
 import asyncio
 import os 
 import DiscordUtils
 from discord.ext import commands
 from discord import app_commands 
+from dotenv import load_dotenv
 
+load_dotenv()
+client_id = os.environ.get('CLIENT_ID')
+client_secret = os.environ.get('CLIENT_SECRET')
+client_pass = os.environ.get('CLIENT_PASS')
+client_user = os.environ.get('CLIENT_USER')
+api_key = os.environ.get('OPENAI_API_KEY')
+dc_token = os.environ.get('TOKEN')
+
+
+reddit = praw.Reddit(client_id = client_id,
+                     client_secret = client_secret, 
+                     username = client_user,
+                     password= client_pass,
+                     user_agent = 'pythonPraw')
 
 ModX = commands.Bot(intents= discord.Intents.all(), command_prefix = "!")
 ModX.remove_command('help')
 
-reddit = praw.Reddit(client_id="byIXmAW3kRROE8EoBWabFQ",client_secret= "BN1H61hNjCJ56ssmogFdBvsjOlCMyg", username= "MonkeMusk1234", password= "THEDARKKNIGHT@2020", user_agent = "pythonPraw"  )
+
 
 @ModX.event
 async def on_ready():
@@ -43,7 +57,7 @@ async def help(ctx, member:discord.Member = None):
    embed.add_field(name= "`!checkSub`", value = "Check trending posts of your favourite subreddit : \n !checkSub <subreddit-name>")
    embed.add_field(name= "`!whois`", value = 'Gives information about a user in an embed') 
    
-   await ctx.send(embed = embed)
+   await ctx.message.reply(embed = embed)
 
 
    
@@ -65,7 +79,7 @@ async def meme(ctx):
    redditEm = discord.Embed(title = name, color = discord.Color.random())
    redditEm.set_image(url = url)
   
-   await ctx.send(embed= redditEm)
+   await ctx.message.reply(embed= redditEm)
 
 #memeIn
 @ModX.command()
@@ -83,7 +97,7 @@ async def memeIn(ctx):
    redditEm = discord.Embed(title = name, color = discord.Color.orange())
    redditEm.set_image(url = url)
 
-   await ctx.send(embed= redditEm)
+   await ctx.message.reply(embed= redditEm)
 
 @ModX.command()
 async def checkSub(ctx, subreddit_name):
@@ -106,7 +120,7 @@ async def checkSub(ctx, subreddit_name):
 #ask 
 @ModX.command()
 async def ask(ctx):
-   openai.api_key = "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"
+   openai.api_key = os.getenv(api_key)
 
    response = openai.Completion.create(
             model="text-davinci-003",
@@ -216,7 +230,7 @@ async def createVoice(ctx, channel_name, *, category_name = None):
 async def delTxt(ctx):
    channel_name = ctx.channel.name
    channel = ctx.channel.delete(channel_name)
-   await ctx.send(f'{ctx.author.name} deleted the {channel.mention}')
+   await ctx.message.reply(f'{ctx.author.name} deleted the {channel.mention}')
 
 #delVc
 @ModX.command()
@@ -224,7 +238,7 @@ async def delTxt(ctx):
 async def delVc(ctx, vc_name):
    guild = ctx.guild
    channel = await guild.delete_voice_channel(vc_name)
-   await ctx.send(f'{ctx.author.name} delted the {channel.meniton}')
+   await ctx.message.reply(f'{ctx.author.name} delted the {channel.meniton}')
 
 #mute 
 @ModX.command()
@@ -232,9 +246,9 @@ async def delVc(ctx, vc_name):
 async def mute(ctx, member: discord.Member):
     if member.voice:
         await member.edit(mute=True)
-        await ctx.send(f'{member.mention} was muted by {ctx.author.mention}')
+        await ctx.message.reply(f'{member.mention} was muted by {ctx.author.mention}')
     else:
-        await ctx.send(f'{member.mention} is not currently in a voice channel.')
+        await ctx.message.reply(f'{member.mention} is not currently in a voice channel.')
 
 #unmute 
 @ModX.command()
@@ -242,9 +256,9 @@ async def mute(ctx, member: discord.Member):
 async def unmute(ctx, member:discord.Member):
    if member.voice:
       await member.edit(mute= False)
-      await ctx.send(f"{member.mention} was unmuted by {ctx.author.mention}")
+      await ctx.message.reply(f"{member.mention} was unmuted by {ctx.author.mention}")
    else:
-      await ctx.send(f"{member.mention} is not in the voice channel right now {ctx.author.mention}")
+      await ctx.message.reply(f"{member.mention} is not in the voice channel right now {ctx.author.mention}")
 
 #mute error
 @mute.error
@@ -256,6 +270,6 @@ async def mute_error(ctx, error):
 @ModX.command()
 async def invite(ctx):
    link = await ctx.channel.create_invite(max_age = 3600)
-   await ctx.send(f"Here is your server invite {ctx.author.mention}: \n {link}")
+   await ctx.message.reply(f"Here is your server invite {ctx.author.mention}: \n {link}")
 
-ModX.run("MTEyMzg1NjU3NDQxMTE5MDI4Mg.GVIfOS.E7vYPyBJwzKb-g4cpNRU_d3iueArovJkdcSEFs")
+ModX.run(dc_token)
