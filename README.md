@@ -13,7 +13,7 @@
 | `!memeIn` | Sends a trending Indian meem from reddit | `!memeIn` |
 | `!delTxt` | Deletes text channel | `!delTxt <channel-name>` |
 | `!delVc` | Deletes  voice channel | `!delVc <channel-name>` |
-| `!createText` | Creates a new text channel..<br /> (Generates New Category , if category is not present in the guild )| `!createText <channel-name><category>` or<br /> `!createText <channel-name>` |
+| `!createText` | Creates a new text channel..<br /> (Generates New Category , if category is not present in the guild )| `!createText <channel><category>` or<br /> `!createText <channel-name>` |
 | `!createVoice` | Creates a new voice channel .<br /> (Generates New Category , if category is not present in the guild )| `!createVoice <channel><category>`</br>or</br> `!createVoice <channel-name>` |
 | `!createCategory` | Creates a new category/channel group | `!createCategory <name>` |
 | `!whois` | Retrieves information about a user | `!whois <user>` |
