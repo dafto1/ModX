@@ -3,7 +3,7 @@
 
 ## 💻Commands: 
 
-| Command | Description | Usage |
+| Command | Description | Usage         |
 |---------|-------------|-------|
 | `!help` | Displays a list of available commands and their descriptions | `!help` |
 | `!ban` | Bans a user from the server | `!ban <user>` |
