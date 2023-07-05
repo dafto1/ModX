@@ -2,7 +2,7 @@
 #### ModX is a basic moderation bot designed to help manage and moderate your Discord server.<br /> It provides a set of commands that allow you to perform various moderation tasks and interact with the server members.
 
 ## 💻Commands: 
-
+All commands have prefix : `!`
 | Command | Description | Usage         |
 |---------|-------------|-------|
 | `!help` | Displays a list of available commands and their descriptions | `!help` |
@@ -23,4 +23,4 @@
 | `!checkSub` | Sends a post from your subreddit | `!checkSub <subreddit-name>` |
 _________________________________________________________
 ## Limitations
- The `!meme`, `!memeIn` , `!checkSub` does not support video memes
+ The `!meme`, `!memeIn` , `!checkSub` does not support video posts
